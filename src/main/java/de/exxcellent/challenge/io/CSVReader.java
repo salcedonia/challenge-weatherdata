@@ -11,14 +11,21 @@ public class CSVReader {
 	 * Stores the name of the csv file to be read
 	 */
 	private String _csvFileName;
+	
+	/**
+	 * Columns which are not pruned from the csv file.
+	 */
+	private ArrayList<Integer> _columnsToBeKept;
 
 	/**
 	 * Constructor.
 	 * @param csvFileName Name of the cvs file to be read
+	 * @param columnsToBeKept 
 	 */
-	public CSVReader(String csvFileName)
+	public CSVReader(String csvFileName, ArrayList<Integer> columnsToBeKept)
 	{
 		_csvFileName = csvFileName;
+		_columnsToBeKept = columnsToBeKept;
 	}
 	
 	/**
@@ -34,10 +41,9 @@ public class CSVReader {
 		try {
 			String fileLine;
 			bufferReader = new BufferedReader(new FileReader(_csvFileName));
-			bufferReader.readLine(); // Skips header line
+			bufferReader.readLine(); // Skips header line 
 			
 			while ((fileLine = bufferReader.readLine()) != null) {
-				System.out.println("Raw CSV data: " + fileLine);
 				csvLines.add(csvToArrayList(fileLine));
 			}
 			
@@ -60,7 +66,7 @@ public class CSVReader {
      * @param csvFile file contents to be converted
      * @return The resulting ArrayList object
      */
- 	public static ArrayList<String> csvToArrayList(String csvFile) {
+ 	public ArrayList<String> csvToArrayList(String csvFile) {
  		ArrayList<String> list = new ArrayList<String>();
  		
  		if (csvFile != null) {
@@ -72,10 +78,13 @@ public class CSVReader {
  			}
  		}
  		
+ 		ArrayList<String> newList = new ArrayList<String>();
  		// Removes unnecessary columns
- 		for (int i = 3; i < list.size(); i++) {
- 			list.remove(i);
+ 		for (int index = 0; index < list.size(); index++) {
+ 			if (_columnsToBeKept.contains(index)) {
+ 				newList.add(list.get(index));	
+ 			}
  		}
- 		return list;
+ 		return newList;
  	}
 }

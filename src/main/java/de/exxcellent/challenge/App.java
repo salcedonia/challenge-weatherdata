@@ -1,8 +1,7 @@
 package de.exxcellent.challenge;
 
-import java.util.ArrayList;
-
-import de.exxcellent.challenge.io.CSVReader;
+import de.exxcellent.challenge.logic.DataAnalyzer;
+import de.exxcellent.challenge.logic.FootballAnalyzer;
 import de.exxcellent.challenge.logic.WeatherAnalyzer;
 
 /**
@@ -13,18 +12,33 @@ import de.exxcellent.challenge.logic.WeatherAnalyzer;
  */
 public final class App {
 
+	/**
+	 * Name of the command line argument to trigger the <b>weather</b> challenge.
+	 */
+	public static final String WEATHER_CHALLENGE = "weather";
+	/**
+	 * Name of the command line argument to trigger the <b>footbal</b> challenge.
+	 */
+	public static final String FOOTBALL_CHALLENGE = "football";
+	
+	/**
+	 * Entry point of the application.
+	 * @param args Arguments passed from the command line.
+	 */
     public static void main(String... args) {
 
-    	CSVReader reader = new CSVReader("src\\main\\resources\\de\\exxcellent\\challenge\\weather.csv");
-    	ArrayList<ArrayList<String>> data = reader.readCSV();
-    	if (data != null)
-    	{
-    		WeatherAnalyzer analyzer = new WeatherAnalyzer(data);
-            String dayWithSmallestTempSpread = analyzer.getdayWithSmallestTempSpread();//"Someday";     // Your day analysis function call …
-            System.out.printf("Day with smallest temperature spread : %s%n", dayWithSmallestTempSpread);
-            
-            String teamWithSmallesGoalSpread = "A good team"; // Your goal analysis function call …
-            System.out.printf("Team with smallest goal spread       : %s%n", teamWithSmallesGoalSpread);    		
+    	if (args.length != 1 || (!args[0].equals(WEATHER_CHALLENGE) && !args[0].equals(FOOTBALL_CHALLENGE))) {
+    		System.err.printf("Wrong parameters: use either " + WEATHER_CHALLENGE + " or " + FOOTBALL_CHALLENGE);
+    		return;
+        }
+    	
+    	DataAnalyzer analyzer = null;
+    	if (args[0].equals(WEATHER_CHALLENGE)) {
+    		analyzer = new WeatherAnalyzer();
     	}
+    	else if (args[0].equals(FOOTBALL_CHALLENGE)) {
+    		analyzer = new FootballAnalyzer();
+		}
+    	analyzer.printAnalysisResult();
     }
 }
